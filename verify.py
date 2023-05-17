@@ -2,9 +2,9 @@
 import torch
 import time
 import torchaudio
-import torchinfo
+#import torchinfo
 import numpy as np
-from torchsummary import summary
+#from torchsummary import summary
 from speechbrain.pretrained import SpeakerRecognition
 verification = SpeakerRecognition.from_hparams(source="speechbrain/spkrec-ecapa-voxceleb", savedir="pretrained_models/spkrec-ecapa-voxceleb")
 
