@@ -27,8 +27,8 @@ def get_detect_cost_function(gt, predictions, λ=0.5):
     return (1-λ)*fn + λ*fp
 
 
-def get_fer_and_dct(gt, predictions, λ=0.5):
+def get_fer_and_dcf(gt, predictions, λ=0.5):
     fp, fn = measure_frame_errors(gt, predictions)
     fer = 100*(fp+fn)/len(gt)
-    dct = (1-λ)*fn + λ*fp
-    return fer, dct
+    dcf = (1-λ)*fn + λ*fp
+    return fer, dcf
