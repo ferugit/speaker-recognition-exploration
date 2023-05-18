@@ -8,9 +8,9 @@ import numpy as np
 from speechbrain.pretrained import SpeakerRecognition
 verification = SpeakerRecognition.from_hparams(source="speechbrain/spkrec-ecapa-voxceleb", savedir="pretrained_models/spkrec-ecapa-voxceleb")
 
-def write_to_file(path, str):
+def write_to_file(path, stri):
     file = open(path, "a")
-    file.write(str)
+    file.write(stri + "\n")
     #print(file.read())
     file.close()
 
@@ -19,7 +19,7 @@ def write_to_file(path, str):
 score, prediction = verification.verify_files('/home/omerhatim/thesis/speechbrain dataset/speechbrain/tests/samples/ASR/spk1_snt1.wav','/home/omerhatim/thesis/speechbrain dataset/speechbrain/tests/samples/ASR/spk2_snt1.wav') # Different Speakers
 print (score,prediction)
 
-path = ""
+path = "/home/omerhatim/thesis/speaker-recognition-exploration/writing.txt"
 stri = ""
 
 file_obj = open(path, "w")
@@ -50,6 +50,6 @@ for j in range(11):
 string_result = ', '.join(map(str, inferences))
 stri = "inference times are in order " + string_result
 
-write_to_file(path, str)
+write_to_file(path, stri)
 print (', '.join(map(str, inferences)))
 #print (f"Inference took {inferencetime:.2f} seconds.")
