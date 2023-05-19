@@ -70,7 +70,7 @@ for speaker1, file1 in speaker_files:
         pairs.append([prefix+file1, prefix+file2, speaker1, speaker2])
 
 predictions = []
-for pair in pairs[:10]:
+for pair in pairs:
     file1, file2, speaker1, speaker2 = pair
     print(f"{speaker1} and {speaker2}")
     score, prediction = verification.verify_files(os.path.join(file1), os.path.join(file2))
