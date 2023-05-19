@@ -1,11 +1,10 @@
-# import libraries and model
 import torch
 import time
-import torchaudio
-#import torchinfo
+
 import numpy as np
-#from torchsummary import summary
+
 from speechbrain.pretrained import SpeakerRecognition
+
 verification = SpeakerRecognition.from_hparams(source="speechbrain/spkrec-ecapa-voxceleb", savedir="pretrained_models/spkrec-ecapa-voxceleb")
 
 def write_to_file(path, stri):
@@ -14,12 +13,12 @@ def write_to_file(path, stri):
     #print(file.read())
     file.close()
 
-    
 # perform verification
-score, prediction = verification.verify_files('/home/omerhatim/thesis/speechbrain dataset/speechbrain/tests/samples/ASR/spk1_snt1.wav','/home/omerhatim/thesis/speechbrain dataset/speechbrain/tests/samples/ASR/spk2_snt1.wav') # Different Speakers
-print (score,prediction)
+#score, prediction = verification.verify_files('/home/omerhatim/thesis/speechbrain dataset/speechbrain/tests/samples/ASR/spk1_snt1.wav','/home/omerhatim/thesis/speechbrain dataset/speechbrain/tests/samples/ASR/spk2_snt1.wav') # Different Speakers
+#print (score,prediction)
+# NOTE: verification is not needed!
 
-path = "/home/omerhatim/thesis/speaker-recognition-exploration/writing.txt"
+path = "writing.txt"
 stri = ""
 
 file_obj = open(path, "w")
