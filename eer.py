@@ -74,7 +74,7 @@ for pair in pairs[:10]:
     file1, file2, speaker1, speaker2 = pair
     print(f"{speaker1} and {speaker2}")
     score, prediction = verification.verify_files(os.path.join(file1), os.path.join(file2))
-    scores.append(score)
+    scores.append(score.data.item())
 
     # Label: 1 if same speaker, 0 if different speakers
     label = int(speaker1 == speaker2)
