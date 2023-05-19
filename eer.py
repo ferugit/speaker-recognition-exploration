@@ -49,12 +49,12 @@ audio_files = [os.path.join(prefix, f) for f in audio_files if f.endswith(".wav"
 pairs = []
 unique_speaker_ids = df['Speaker_ID'].unique()
 
-for speaker_id in unique_speaker_ids:
-    speaker_files = df.loc[df['Speaker_ID'] == speaker_id, 'Filename'].tolist()
-    speaker_files = [os.path.join(prefix, f) for f in speaker_files if f.endswith(".wav")]
-    speaker_pairs = list(itertools.combinations(speaker_files, 2))
-    speaker_pairs_with_id = [((pair[0], pair[1]), (speaker_id, speaker_id)) for pair in speaker_pairs]
-    pairs.extend(speaker_pairs_with_id)
+#for speaker_id in unique_speaker_ids:
+#   speaker_files = df.loc[df['Speaker_ID'] == speaker_id, 'Filename'].tolist()
+#    speaker_files = [os.path.join(prefix, f) for f in speaker_files if f.endswith(".wav")]
+#    speaker_pairs = list(itertools.combinations(speaker_files, 2))
+#    speaker_pairs_with_id = [((pair[0], pair[1]), (speaker_id, speaker_id)) for pair in speaker_pairs]
+#    pairs.extend(speaker_pairs_with_id)
 
 scores = []
 true_labels = []
