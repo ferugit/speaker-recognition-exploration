@@ -23,7 +23,7 @@ parser.add_argument('--savedfile', default='', help='where to place the results'
 args = parser.parse_args()
 
 prefix = args.prefix
-savedfile = args.prefix
+savedfile = args.savedfile
 
 verification = SpeakerRecognition.from_hparams(source="speechbrain/spkrec-ecapa-voxceleb", savedir="pretrained_models/spkrec-ecapa-voxceleb")
 
