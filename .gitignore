@@ -1,1 +1,4 @@
 .venv
+pretrained_models
+clips*/
+*.wav
