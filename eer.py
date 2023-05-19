@@ -16,6 +16,17 @@ from torchsummary import summary
 from speechbrain.pretrained import SpeakerRecognition
 verification = SpeakerRecognition.from_hparams(source="speechbrain/spkrec-ecapa-voxceleb", savedir="pretrained_models/spkrec-ecapa-voxceleb")
 
+def write_to_file(file_path, gt, pred, score):
+    data = {'true label': gt, 'predection': pred, 'score': score}
+    df = pd.DataFrame(data)
+
+    df.to_csv(file_path, sep='\t', index=False)
+
+    print(f"Data has been successfully written to {file_path}.")
+
+prefix = "/home/omerhatim/thesis/ok-aura-v1.0.0/clips/"
+savedfile = '/home/omerhatim/thesis/speaker-recognition-exploration/Verification1s.tsv'
+
 # read database excel file
 df = pd.read_csv('/home/omerhatim/thesis/ok-aura-v1.0.0/dataset.tsv', header = 0, sep = '\t')
 A = df['Speaker_ID'].value_counts()
@@ -32,7 +43,6 @@ df['Speaker_ID'] = df['Speaker_ID'].map(string_to_number)
 
 B = df['Speaker_ID'].value_counts()
 
-#prefix = "/home/omerhatim/audio"
 
 prefix = "/home/omerhatim/thesis/ok-aura-v1.0.0/clips/"
 
@@ -67,7 +77,7 @@ for speaker1, file1 in speaker_files:
         pairs.append([prefix+file1, prefix+file2, speaker1, speaker2])
 
 predictions = []
-for pair in pairs:
+for pair in pairs[:10]:
     file1, file2, speaker1, speaker2 = pair
     print(f"{speaker1} and {speaker2}")
     score, prediction = verification.verify_files(os.path.join(file1), os.path.join(file2))
@@ -78,22 +88,5 @@ for pair in pairs:
     true_labels.append(label)
     predictions.append(int(prediction))
 
-true_labels = np.array(true_labels)
-predictions = np.array(predictions)
 
-
-# Compute ROC curve and ROC area
-fpr, tpr, _ = roc_curve(true_labels, scores)
-roc_auc = auc(fpr, tpr)
-
-# Plot ROC curve
-plt.figure()
-plt.plot(fpr, tpr, color="darkorange", lw=2, label="ROC curve (area = %0.2f)" % roc_auc)
-plt.plot([0, 1], [0, 1], color="navy", lw=2, linestyle="--")
-plt.xlim([0.0, 1.0])
-plt.ylim([0.0, 1.05])
-plt.xlabel("False Positive Rate")
-plt.ylabel("True Positive Rate")
-plt.title("Receiver Operating Characteristic")
-plt.legend(loc="lower right")
-plt.show()
+write_to_file(savedfile, true_labels, predictions, scores)
