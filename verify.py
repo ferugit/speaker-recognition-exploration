@@ -34,9 +34,10 @@ for j in range(11):
         samplingrate= 8000
     else:
         samplingrate = j * 16000 
+    sample1 = torch.randn(1,samplingrate)
+    sample2 = torch.randn(1,samplingrate)
+    
     for i in range(1000):
-        sample1 = torch.randn(1,samplingrate)
-        sample2 = torch.randn(1,samplingrate)
         start_time = time.time()
         verification.verify_batch(sample1,sample2)
         end_time = time.time()

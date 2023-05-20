@@ -1,7 +1,6 @@
 # import libraries
 import os
 import argparse
-import itertools
 import pandas as pd
 
 #import the model
