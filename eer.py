@@ -1,37 +1,34 @@
 # import libraries
-import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
-from sklearn.metrics import roc_curve, auc
-import torch
-import itertools
-import time
 import os
-import itertools
-import torchaudio
-import torchinfo
-from torchsummary import summary
+import argparse
+import pandas as pd
 
 #import the model
 from speechbrain.pretrained import SpeakerRecognition
-verification = SpeakerRecognition.from_hparams(source="speechbrain/spkrec-ecapa-voxceleb", savedir="pretrained_models/spkrec-ecapa-voxceleb")
+
 
 def write_to_file(file_path, gt, pred, score):
     data = {'true label': gt, 'predection': pred, 'score': score}
     df = pd.DataFrame(data)
-
     df.to_csv(file_path, sep='\t', index=False)
-
     print(f"Data has been successfully written to {file_path}.")
 
-prefix = "/home/omerhatim/thesis/ok-aura-v1.0.0/clips/"
-savedfile = '/home/omerhatim/thesis/speaker-recognition-exploration/Verification1s.tsv'
+
+parser = argparse.ArgumentParser(description='KWS models')
+
+parser.add_argument('--prefix', default='', help='path to data')
+parser.add_argument('--savedfile', default='', help='where to place the results')
+
+args = parser.parse_args()
+
+prefix = args.prefix
+savedfile = args.savedfile
+
+verification = SpeakerRecognition.from_hparams(source="speechbrain/spkrec-ecapa-voxceleb", savedir="pretrained_models/spkrec-ecapa-voxceleb")
 
 # read database excel file
-df = pd.read_csv('/home/omerhatim/thesis/ok-aura-v1.0.0/dataset.tsv', header = 0, sep = '\t')
+df = pd.read_csv('Data/dataset.tsv', header = 0, sep = '\t')
 A = df['Speaker_ID'].value_counts()
-
-
 
 unique_speaker_ids = A.index
 string_to_number = {string: idx for idx, string in enumerate(unique_speaker_ids)}
@@ -39,12 +36,7 @@ string_to_number = {string: idx for idx, string in enumerate(unique_speaker_ids)
 # Map the 'Speaker_ID' column using the dictionary
 df['Speaker_ID'] = df['Speaker_ID'].map(string_to_number)
 
-
-
 B = df['Speaker_ID'].value_counts()
-
-
-prefix = "/home/omerhatim/thesis/ok-aura-v1.0.0/clips/"
 
 # Assuming you have a DataFrame called 'df' with a column 'path' containing the file paths
 audio_files = df['Filename'].tolist()
@@ -56,12 +48,12 @@ audio_files = [os.path.join(prefix, f) for f in audio_files if f.endswith(".wav"
 pairs = []
 unique_speaker_ids = df['Speaker_ID'].unique()
 
-for speaker_id in unique_speaker_ids:
-    speaker_files = df.loc[df['Speaker_ID'] == speaker_id, 'Filename'].tolist()
-    speaker_files = [os.path.join(prefix, f) for f in speaker_files if f.endswith(".wav")]
-    speaker_pairs = list(itertools.combinations(speaker_files, 2))
-    speaker_pairs_with_id = [((pair[0], pair[1]), (speaker_id, speaker_id)) for pair in speaker_pairs]
-    pairs.extend(speaker_pairs_with_id)
+#for speaker_id in unique_speaker_ids:
+#   speaker_files = df.loc[df['Speaker_ID'] == speaker_id, 'Filename'].tolist()
+#    speaker_files = [os.path.join(prefix, f) for f in speaker_files if f.endswith(".wav")]
+#    speaker_pairs = list(itertools.combinations(speaker_files, 2))
+#    speaker_pairs_with_id = [((pair[0], pair[1]), (speaker_id, speaker_id)) for pair in speaker_pairs]
+#    pairs.extend(speaker_pairs_with_id)
 
 scores = []
 true_labels = []
@@ -77,16 +69,15 @@ for speaker1, file1 in speaker_files:
         pairs.append([prefix+file1, prefix+file2, speaker1, speaker2])
 
 predictions = []
-for pair in pairs[:10]:
+for pair in pairs:
     file1, file2, speaker1, speaker2 = pair
     print(f"{speaker1} and {speaker2}")
     score, prediction = verification.verify_files(os.path.join(file1), os.path.join(file2))
-    scores.append(score)
+    scores.append(score.data.item())
 
     # Label: 1 if same speaker, 0 if different speakers
     label = int(speaker1 == speaker2)
     true_labels.append(label)
     predictions.append(int(prediction))
-
 
 write_to_file(savedfile, true_labels, predictions, scores)
