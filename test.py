@@ -1,25 +1,34 @@
-# import libraries
-import torch
-import time
-import torchaudio
-import torchinfo
+import pyaudio
+import wave
 
-# import embeddings model and calculate embeddings for one sample
-from speechbrain.pretrained import EncoderClassifier
-classifier = EncoderClassifier.from_hparams(source="speechbrain/spkrec-ecapa-voxceleb")
-signal, fs =torchaudio.load('/home/omerhatim/thesis/speechbrain dataset/speechbrain/tests/samples/ASR/spk1_snt1.wav')
-embeddings = classifier.encode_batch(signal)
-print (embeddings)
+chunk = 1024
+FORMAT   = pyaudio.paInt16
+CHANNELS = 1
+sample_rate = 16000
 
+p = pyaudio.PyAudio()
 
-# calculate inference time for one sample 
-sample = torch.randn(1,32000)
-start_time = time.time()
-classifier.encode_batch(sample)
-end_time = time.time()
-inference_time = end_time - start_time
-print (f"Inference took {inference_time:.2f} seconds.")
+stream = p.open(format=FORMAT,
+                channels=CHANNELS,
+                rate=sample_rate,
+                input=True,
+                frames_per_buffer=chunk)
 
+print("Start Recording ...")
 
-#print summary of the model, parameters, size, etc
-torchinfo.summary(classifier, input_size=(1,16000))
+frames = []
+seconds = 5
+for i in renge (0, int(sample_rate / chunk * seconds)):
+    data = stream.read(chunk)
+    frames.append(data)
+print("Recording Stopped...")
+
+stream.stop_stream()
+stream.close()
+p.terminate()
+
+wf = wave.open("output.wav",'wb')
+wf.setnchannels(CHANNELS)
+wf.setframerate(sample_rate)
+wf.writeframes(b''.join(frames))
+wf.close
