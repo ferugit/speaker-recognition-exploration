@@ -2,11 +2,11 @@
 from TTS.api import TTS
 from IPython.display import Audio
 import azure.cognitiveservices.speech as speechsdk
-import numpy as np
 import wave
 import pyaudio
 import pandas as pd
 
+from speechbrain.pretrained import SpeakerRecognition
 verification = SpeakerRecognition.from_hparams(source="speechbrain/spkrec-ecapa-voxceleb")
 speech_key, service_region = "085eea5fc45d442781fec647bd0f0bba", "westeurope"
 
