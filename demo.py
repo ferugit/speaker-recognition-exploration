@@ -109,7 +109,7 @@ def perform_service(new_service):
 
 def enroll():
 
-    df = pd.read_csv('Speakers.tsv', header = 0, sep = '\t')
+    df = pd.read_csv('Speakers_file.tsv', header = 0, sep = '\t')
     A = df['Speaker_Name'].to_list()
 
 
@@ -137,7 +137,7 @@ def enroll():
     
 
 def verify():
-    df = pd.read_csv('Speakers.tsv', header = 0, sep = '\t')
+    df = pd.read_csv('Speakers_file.tsv', header = 0, sep = '\t')
     A = df['Speaker_Name'].to_list()
     B = df['Filename'].to_list()
     speaker_files = list(zip(A, B))
@@ -174,7 +174,7 @@ def verify():
 
 
 def delete():
-    df = pd.read_csv('Speakers.tsv', header = 0, sep = '\t')
+    df = pd.read_csv('Speakers_file.tsv', header = 0, sep = '\t')
     A = df['Speaker_Name'].to_list()
     
 
