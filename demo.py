@@ -3,6 +3,7 @@ from TTS.api import TTS
 from IPython.display import Audio
 import azure.cognitiveservices.speech as speechsdk
 import wave
+import numpy as np
 import pyaudio
 import pandas as pd
 
