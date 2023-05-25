@@ -1,13 +1,15 @@
 # imports
 from TTS.api import TTS
 from IPython.display import Audio
-import deepspeech
+import azure.cognitiveservices.speech as speechsdk
 import numpy as np
 import wave
 import pyaudio
 import pandas as pd
-from speechbrain.pretrained import SpeakerRecognition
+
 verification = SpeakerRecognition.from_hparams(source="speechbrain/spkrec-ecapa-voxceleb")
+speech_key, service_region = "085eea5fc45d442781fec647bd0f0bba", "westeurope"
+
 
 # functions
 
@@ -68,27 +70,35 @@ def Text_to_Speech(sentence, audio_file):
     tts = TTS(model_name)
     tts.tts_to_file(text= sentence,  file_path= audio_file)
     wn = Audio('output.wav', autoplay=True)
+    wn.play()
 
-def Speech_to_Text(AudioFile):
-    model_path = '/home/omerhatim/thesis/speaker-recognition-exploration/pretrained_models/deepspeech-0.9.3-models.pbmm'
-    ds = deepspeech.Model(model_path)
-    audio_path = AudioFile
-    audio = wave.open(audio_path, 'rb')
-    audio_data = audio.readframes(audio.getnframes())
-    sample_rate = audio.getframerate()
-    audio_array = np.frombuffer(audio_data, dtype=np.int16)
-    text = ds.stt(audio_array)
+def Speech_to_Text():
+    speech_config = speechsdk.SpeechConfig(subscription=speech_key, region=service_region)
+    speech_recognizer = speechsdk.SpeechRecognizer(speech_config=speech_config)
+    print("Say something...")
+    result = speech_recognizer.recognize_once()
 
-    return text
+    # Checks result.
+    if result.reason == speechsdk.ResultReason.RecognizedSpeech:
+        print("Recognized: {}".format(result.text))
+        return result.text
+    elif result.reason == speechsdk.ResultReason.NoMatch:
+        print("No speech could be recognized: {}".format(result.no_match_details))
+    elif result.reason == speechsdk.ResultReason.Canceled:
+        cancellation_details = result.cancellation_details
+        print("Speech Recognition canceled: {}".format(cancellation_details.reason))
+    if cancellation_details.reason == speechsdk.CancellationReason.Error:
+        print("Error details: {}".format(cancellation_details.error_details))
+ 
 
-def perform_service(input):
+def perform_service(new_service):
     if "enroll" in new_service:
         enroll()
 
-    if "verification" in  new_service:
+    if "verification" in new_service:
         verify()
 
-    if "delete" in  new_service:
+    if "delete" in new_service:
         delete()
 
     else:
@@ -108,10 +118,7 @@ def enroll():
     Text_to_Speech(sent,pat)
 
     # entering name
-    sec = 5
-    pat = "name.wav"
-    Record(sec,pat)
-    name = Speech_to_Text(pat)
+    name = Speech_to_Text()
     name = extract_Name(name)
 
     if name in A:
@@ -122,7 +129,7 @@ def enroll():
         pathtosave = "".join([name,".wav"])
         Record(sec, pathtosave)
 
-        df = df.append({'Speaker_Name': 10, 'Audio_File': 1}, ignore_index=True)
+        df = df.append({'Speaker_Name': name, 'Audio_File': pathtosave}, ignore_index=True)
         df.to_csv('Speakers.tsv', sep='\t', index=False)
 
     
@@ -135,25 +142,29 @@ def verify():
     B = df['Filename'].to_list()
     speaker_files = list(zip(A, B))
 
-    sent = "say your name for verification"
+    sent = "please say your name"
     pat = 'enroll_name.wav'
     Text_to_Speech(sent,pat)
 
     # entering name
-    sec = 5
-    pat = "name.wav"
-    Record(sec,pat)
-    name = Speech_to_Text(pat)
+    name = Speech_to_Text()
     name = extract_Name(name)
 
     if name in A:
+        sent = "please say any sentence"
+        pat = 'enroll_name.wav'
+        Text_to_Speech(sent,pat)
+
+        sec=3
+        pathtosave = 'verify_check.wav'
+        Record(sec, pathtosave)
         for speaker, file in speaker_files:
             if speaker == name:
                 audio_file = file
 
         score, prediction = verification.verify_files(pat, audio_file)
         sentence = check_speaker(prediction)
-        verified_audio = 'verification'
+        verified_audio = 'verification.wav'
         Text_to_Speech(sentence, verified_audio)
 
     else :
@@ -172,10 +183,7 @@ def delete():
     Text_to_Speech(sent,pat)
 
     # entering name
-    sec = 5
-    pat = "name.wav"
-    Record(sec,pat)
-    name = Speech_to_Text(pat)
+    name = Speech_to_Text()
     name = extract_Name(name)
 
     if name in A:
@@ -189,31 +197,10 @@ pat = "welcome.wav"
 Text_to_Speech(sent,pat)
 
 # service selection
-sec = 5
-pat = "service.wav"
-Record(sec,pat)
-
-new_service = Speech_to_Text(pat)
+new_service = Speech_to_Text()
 
 perform_service(new_service)
-
 
 sent = "Thank You"
 pat = "thanks.wav"
 Text_to_Speech(sent,pat)
-# 
-
-
-
-
-
-
-
-# #sent = "this is my name and I love you"
-# pat = "output.wav"
-
-# #Text_to_Speech(sent,pat)
-
-# sent = Speech_to_Text(pat)
-
-# print(sent)
