@@ -17,7 +17,9 @@ from speechbrain.pretrained import EncoderClassifier
 
 # load the model and credentials for azure STT
 classifier = EncoderClassifier.from_hparams(source="speechbrain/spkrec-ecapa-voxceleb")
-speech_key, service_region = "085eea5fc45d442781fec647bd0f0bba", "westeurope"
+
+# add credentials to azure STT
+speech_key, service_region = "", ""
 
 
 
