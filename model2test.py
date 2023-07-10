@@ -9,10 +9,7 @@ import numpy as np
 feature_extractor = Wav2Vec2FeatureExtractor.from_pretrained('microsoft/wavlm-base-sv')
 model = WavLMForXVector.from_pretrained('microsoft/wavlm-base-sv')
 
-
 classifier = EncoderClassifier.from_hparams(source="speechbrain/spkrec-ecapa-voxceleb")
-
-
 
 # writing to files
 def write_to_file(file_path, one, two, three, four, five, six):
@@ -93,30 +90,3 @@ for j in range(11):
 
 file_path = 'inferences.tsv'
 write_to_file(file_path, ecapa_model_embeddings_inferences, ecapa_model_scoring_inferences, wavlm_model_embeddings_inferences,wavlm_model_scoring_inferences,ecapa_embeddings_size,wavlm_embeddings_size)
-
-
-# sample = torch.randn(1,16000)
-
-# start_time = time.time()
-# #waveform1, _ = torchaudio.load(sample)
-# waveform1 = sample.squeeze()
-# inputs = feature_extractor(waveform1, return_tensors="pt")
-# embeddings1 = model(**inputs).embeddings
-# end_time = time.time()
-# inference_time = end_time - start_time
-# print(f"the inference took {inference_time} seconds")
-
-# sample2 = torch.randn(1,16000)
-# waveform2 = sample2.squeeze()
-# inputs2 = feature_extractor(waveform1, return_tensors="pt")
-# embeddings2 = model(**inputs).embeddings
-# start_time2 = time.time()
-
-# normalized_embeddings1 = torch.nn.functional.normalize(embeddings1, dim=-1)
-# normalized_embeddings2 = torch.nn.functional.normalize(embeddings2, dim=-1)
-# cosine_sim = torch.nn.CosineSimilarity(dim=-1)
-# similarity = cosine_sim(normalized_embeddings1, normalized_embeddings2).item()
-
-# end_time2 = time.time()
-# inference2= end_time2 - start_time2
-# print(f"cosine similarity took {inference2} seconds")
